@@ -212,7 +212,7 @@ const filteredProducts = computed(() => {
         <div class="product-image">
 
           <img
-            :src="product.image"
+            :src="product.images?.[0] || product.image"
             :alt="product.name"
           />
 
