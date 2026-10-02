@@ -1,24 +1,13 @@
 <script setup>
+import Navbar from './components/Navbar.vue'
 import { products } from './data/products'
 import ProductCard from './components/ProductCard.vue'
 </script>
 <template>
   <div class="app">
     <!-- Navbar -->
-    <header class="navbar">
-      <div class="logo">QBIYA</div>
-
-      <nav>
-        <a href="#">Accueil</a>
-        <a href="#">Collection</a>
-        <a href="#">À propos</a>
-        <a href="#">Contact</a>
-      </nav>
-
-      <button class="cart">
-        🛒 Panier
-      </button>
-    </header>
+    <Navbar />
+    <RouterView />
 
     <!-- Hero -->
     <main>

@@ -12,7 +12,7 @@ defineProps({
 
     <div class="product-image">
       <img
-        :src="product.image"
+        :src="product.image || product.images?.[0] || '/products/qbiya1.jfif'"
         :alt="product.name"
       />
     </div>
