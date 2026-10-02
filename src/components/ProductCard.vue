@@ -10,14 +10,18 @@ defineProps({
 <template>
   <article class="product-card">
 
-    <div class="product-image">
+    <RouterLink
+      :to="`/product/${product.id}`"
+      class="product-image"
+    >
       <img
-        :src="product.image || product.images?.[0] || '/products/qbiya1.jfif'"
+        :src="product.images?.[0] || product.image"
         :alt="product.name"
       />
-    </div>
+    </RouterLink>
 
     <div class="product-info">
+
       <p class="category">
         {{ product.category }}
       </p>
@@ -28,9 +32,13 @@ defineProps({
         {{ product.price }} DH
       </p>
 
-      <button>
-        Voir le produit
-      </button>
+      <RouterLink
+        :to="`/product/${product.id}`"
+        class="view-product"
+      >
+        VIEW PRODUCT →
+      </RouterLink>
+
     </div>
 
   </article>
@@ -38,49 +46,64 @@ defineProps({
 
 <style scoped>
 .product-card {
-  background: white;
-  overflow: hidden;
+  min-width: 0;
 }
 
 .product-image {
-  height: 400px;
-  background: #eee;
+  display: block;
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  overflow: hidden;
+  background: #f5f5f5;
 }
 
 .product-image img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
+  transition: transform 0.5s ease;
+}
+
+.product-image:hover img {
+  transform: scale(1.04);
 }
 
 .product-info {
-  padding: 20px;
+  padding-top: 15px;
 }
 
 .category {
-  font-size: 11px;
+  font-size: 9px;
   letter-spacing: 2px;
-  color: #888;
-  text-transform: uppercase;
+  color: #777;
+  margin-bottom: 8px;
 }
 
-h3 {
-  margin: 8px 0;
-  font-size: 18px;
+.product-info h3 {
+  font-size: 13px;
   font-weight: 500;
+  margin: 0 0 8px;
+  letter-spacing: 0.5px;
 }
 
 .price {
-  font-weight: 600;
-  margin-bottom: 15px;
+  font-size: 13px;
+  margin: 0 0 15px;
 }
 
-button {
-  width: 100%;
-  padding: 12px;
-  background: #171717;
-  color: white;
-  border: none;
-  cursor: pointer;
+.view-product {
+  color: #111;
+  text-decoration: none;
+  font-size: 9px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #111;
+  padding-bottom: 4px;
+}
+
+@media (max-width: 600px) {
+  .product-info h3 {
+    font-size: 12px;
+  }
 }
 </style>
