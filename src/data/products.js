@@ -1,45 +1,73 @@
 export const products = [
   {
     id: 1,
-    name: "Qbiya Classique",
-    price: 499,
+    name: "QBIYA OVERSIZE",
+    price: 699,
     category: "Homme",
-    color: "Noir",
-    sizes: ["M", "L", "XL"],
-    image: "/products/qbiya-1.jpg",
-    description: "Qbiya marocaine élégante avec une finition moderne."
+    color: "Burgundy",
+    image: "/products/qbiya1.jfif",
+    sizes: ["S", "M", "L", "XL"],
+    images: [
+      "/products/qbiya1.jfif",
+      "/products/qbiya2.png",
+      "/products/qbiya3.jfif"
+    ],
+    description:
+      "Qbiya oversize inspirée du style marocain contemporain. Une pièce confortable avec une coupe moderne et élégante.",
+    stock: 10
   },
 
   {
     id: 2,
-    name: "Qbiya Premium",
-    price: 699,
+    name: "QBIYA PREMIUM",
+    price: 799,
     category: "Homme",
-    color: "Beige",
+    color: "Black",
+    image: "/products/qbiya2.png",
     sizes: ["M", "L", "XL", "XXL"],
-    image: "/products/qbiya-2.jpg",
-    description: "Une qbiya premium conçue pour les occasions spéciales."
+    images: [
+      "/products/qbiya2.png",
+      "/products/qbiya3.jfif",
+      "/products/qbiya4.jfif"
+    ],
+    description:
+      "Une qbiya premium avec une finition élégante et un style minimaliste.",
+    stock: 8
   },
 
   {
     id: 3,
-    name: "Qbiya Élégance",
+    name: "QBIYA ESSENTIAL",
     price: 599,
     category: "Femme",
-    color: "Crème",
+    color: "Cream",
+    image: "/products/qbiya3.jfif",
     sizes: ["S", "M", "L"],
-    image: "/products/qbiya-3.jpg",
-    description: "Une pièce élégante inspirée du style marocain."
+    images: [
+      "/products/qbiya3.jfif",
+      "/products/qbiya4.jfif",
+      "/products/qbiya1.jfif"
+    ],
+    description:
+      "Une pièce légère et élégante adaptée à un style quotidien.",
+    stock: 15
   },
 
   {
     id: 4,
-    name: "Qbiya Royale",
-    price: 799,
+    name: "QBIYA SIGNATURE",
+    price: 899,
     category: "Femme",
-    color: "Noir",
+    color: "Black",
+    image: "/products/qbiya4.jfif",
     sizes: ["S", "M", "L", "XL"],
-    image: "/products/qbiya-4.jpg",
-    description: "Design raffiné et finition premium."
+    images: [
+      "/products/qbiya4.jfif",
+      "/products/qbiya1.jfif",
+      "/products/qbiya2.png"
+    ],
+    description:
+      "Notre modèle signature avec une coupe raffinée et une finition premium.",
+    stock: 5
   }
 ]
