@@ -5,12 +5,12 @@ export const products = [
     price: 699,
     category: "Homme",
     color: "Burgundy",
-    image: "/products/qbiya1.jfif",
+    image: "/products/modelhome.jpg",
     sizes: ["S", "M", "L", "XL"],
     images: [
-      "/products/qbiya1.jfif",
-      "/products/qbiya2.png",
-      "/products/qbiya3.jfif"
+      "/products/modelhome.jpg",
+      "/products/modelhome.jpg",
+      "/products/modelhome.jpg"
     ],
     description:
       "Qbiya oversize inspirée du style marocain contemporain. Une pièce confortable avec une coupe moderne et élégante.",
@@ -23,12 +23,12 @@ export const products = [
     price: 799,
     category: "Homme",
     color: "Black",
-    image: "/products/qbiya2.png",
+    image: "/products/abiya1.jpg",
     sizes: ["M", "L", "XL", "XXL"],
     images: [
-      "/products/qbiya2.png",
-      "/products/qbiya3.jfif",
-      "/products/qbiya4.jfif"
+      "/products/qbiya5.jpg",
+      "/products/qbiya6.jpg",
+      "/products/modelhome.jpg"
     ],
     description:
       "Une qbiya premium avec une finition élégante et un style minimaliste.",
@@ -46,7 +46,8 @@ export const products = [
     images: [
       "/products/qbiya3.jfif",
       "/products/qbiya4.jfif",
-      "/products/qbiya1.jfif"
+      "/products/qbiya1.jfif",
+      "/products/qbiya5.png"
     ],
     description:
       "Une pièce légère et élégante adaptée à un style quotidien.",

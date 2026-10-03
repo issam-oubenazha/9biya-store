@@ -2,12 +2,14 @@
 import { ref, computed } from 'vue'
 import { useCartStore } from '../stores/cart'
 import { products } from '../data/products'
+import { useWishlistStore } from '../stores/wishlist'
 
 const menuOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
 
 const cart = useCartStore()
+
 
 const searchResults = computed(() => {
   if (!searchQuery.value.trim()) return []
@@ -25,6 +27,7 @@ function closeSearch() {
   searchOpen.value = false
   searchQuery.value = ''
 }
+const wishlist = useWishlistStore()
 </script>
 
 <template>
@@ -107,6 +110,20 @@ function closeSearch() {
         >
              ⌕
         </button>
+        <RouterLink
+            to="/wishlist"
+            class="wishlist-link"
+            aria-label="Wishlist"
+            >
+            ♡
+
+            <span
+                v-if="wishlist.totalItems > 0"
+                class="wishlist-count"
+            >
+                {{ wishlist.totalItems }}
+            </span>
+         </RouterLink>
 
       <RouterLink
         to="/account"
@@ -182,9 +199,173 @@ function closeSearch() {
     </div>
 
   </header>
+  <nav class="bottom-nav">
+
+  <RouterLink to="/" class="bottom-nav-item" aria-label="Home">
+    <span>⌂</span>
+  </RouterLink>
+
+  <RouterLink to="/shop" class="bottom-nav-item" aria-label="Shop">
+    <span>◫</span>
+  </RouterLink>
+
+  <RouterLink to="/wishlist" class="bottom-nav-item" aria-label="Wishlist">
+    <span>♡</span>
+    <small v-if="wishlist.totalItems > 0">
+      {{ wishlist.totalItems }}
+    </small>
+  </RouterLink>
+
+  <RouterLink to="/about" class="bottom-nav-item" aria-label="About">
+    <span>◎</span>
+  </RouterLink>
+
+  <RouterLink to="/contact" class="bottom-nav-item" aria-label="Contact">
+    <span>✉</span>
+  </RouterLink>
+
+  <RouterLink to="/cart" class="bottom-nav-item" aria-label="Cart">
+    <span>♧</span>
+
+    <small v-if="cart.totalItems > 0">
+      {{ cart.totalItems }}
+    </small>
+  </RouterLink>
+
+</nav>
 </template>
 
 <style scoped>
+.bottom-nav {
+  position: fixed;
+
+  left: 50%;
+  bottom: 22px;
+
+  transform: translateX(-50%);
+
+  z-index: 9999;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  gap: 4px;
+
+  padding: 7px;
+
+  background: rgba(10, 10, 10, 0.94);
+
+  border: 1px solid #292929;
+
+  border-radius: 50px;
+
+  box-shadow:
+    0 15px 40px rgba(0, 0, 0, 0.18);
+
+  backdrop-filter: blur(12px);
+
+  white-space: nowrap;
+}
+
+/* ITEM */
+
+.bottom-nav-item {
+  position: relative;
+
+  width: 42px;
+  height: 42px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  color: #aaa;
+
+  text-decoration: none;
+
+  border-radius: 50%;
+
+  transition:
+    color 0.25s ease,
+    background 0.25s ease,
+    transform 0.25s ease;
+}
+
+.bottom-nav-item span {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* HOVER */
+
+.bottom-nav-item:hover {
+  color: #fff;
+  background: #1b1b1b;
+  transform: translateY(-2px);
+}
+
+/* ACTIVE PAGE */
+
+.bottom-nav-item.router-link-exact-active {
+  background: #fff;
+  color: #000;
+}
+
+.bottom-nav-item.router-link-exact-active:hover {
+  background: #fff;
+  color: #000;
+}
+
+/* COUNTER */
+
+.bottom-nav-item small {
+  position: absolute;
+
+  top: 3px;
+  right: 3px;
+
+  min-width: 13px;
+  height: 13px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+
+  background: #fff;
+  color: #000;
+
+  font-size: 7px;
+  font-weight: 600;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .bottom-nav {
+    bottom: 14px;
+    gap: 2px;
+    padding: 6px;
+  }
+
+  .bottom-nav-item {
+    width: 39px;
+    height: 39px;
+  }
+
+  .bottom-nav-item span {
+    font-size: 18px;
+  }
+}
+
+/* SPACE FOR FIXED NAV */
+
+:global(body) {
+  padding-bottom: 90px;
+}
 .search-overlay {
   position: fixed;
   inset: 0;
@@ -410,5 +591,32 @@ function closeSearch() {
   .actions {
     gap: 15px;
   }
+  .wishlist-link {
+  position: relative;
+  color: #111;
+  text-decoration: none;
+  font-size: 22px;
+  line-height: 1;
+}
+
+.wishlist-count {
+  position: absolute;
+  top: -9px;
+  right: -10px;
+
+  min-width: 16px;
+  height: 16px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  background: #111;
+  color: white;
+
+  font-size: 8px;
+  line-height: 1;
+}
 }
 </style>

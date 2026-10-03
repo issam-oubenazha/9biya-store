@@ -120,6 +120,49 @@ const featuredProducts = products.slice(0, 4)
         </button>
       </form>
     </section>
+    <section class="home-contact">
+
+  <div class="home-contact-card">
+
+    <p class="contact-brand">QBIYA</p>
+
+    <h2>CONTACT</h2>
+
+    <div class="contact-links">
+
+      <a
+        href="https://instagram.com/qbiya"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span>INSTAGRAM</span>
+        <strong>@qbiya</strong>
+      </a>
+
+      <a
+        href="https://tiktok.com/@qbiya"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        <span>TIKTOK</span>
+        <strong>@qbiya</strong>
+      </a>
+
+      <a href="mailto:contact@qbiya.ma">
+        <span>EMAIL</span>
+        <strong>contact@qbiya.ma</strong>
+      </a>
+
+      <a href="tel:+212600000000">
+        <span>PHONE</span>
+        <strong>+212 6 00 00 00 00</strong>
+      </a>
+
+    </div>
+
+  </div>
+
+</section>
 
   </main>
 </template>
@@ -145,7 +188,7 @@ const featuredProducts = products.slice(0, 4)
       rgba(0, 0, 0, 0.65),
       rgba(0, 0, 0, 0.05)
     ),
-    url('/products/hero.jpg') center / cover no-repeat;
+    url('/products/Branding identity.jpg') center / cover no-repeat;
 
   color: white;
 }
@@ -303,11 +346,11 @@ const featuredProducts = products.slice(0, 4)
 }
 
 .category-men {
-  background-image: url('/products/men.jpg');
+  background-image: url('/products/cool Jacket.jpg');
 }
 
 .category-women {
-  background-image: url('/products/women.jpg');
+  background-image: url('/products/modelwomen.jpg');
 }
 
 /* NEWSLETTER */
@@ -405,6 +448,119 @@ const featuredProducts = products.slice(0, 4)
 
   .newsletter {
     padding: 100px 25px;
+  }
+}
+.home-contact {
+  background: #000;
+  padding: 55px 20px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.home-contact-card {
+  width: 100%;
+  max-width: 400px;
+
+  padding: 30px 34px;
+
+  border: 1px solid #2b2b2b;
+  background: #050505;
+  color: #fff;
+
+  box-sizing: border-box;
+}
+
+.contact-brand {
+  text-align: center;
+
+  font-size: 7px;
+  letter-spacing: 5px;
+  color: #777;
+
+  margin: 0 0 12px;
+}
+
+.home-contact-card h2 {
+  text-align: center;
+
+  font-size: 27px;
+  line-height: 1;
+  font-weight: 400;
+  letter-spacing: -0.8px;
+
+  margin: 0 0 27px;
+}
+
+.contact-links {
+  width: 100%;
+  border-top: 1px solid #292929;
+}
+
+.contact-links a {
+  width: 100%;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 25px;
+
+  padding: 12px 0;
+
+  border-bottom: 1px solid #292929;
+
+  color: #fff;
+  text-decoration: none;
+
+  box-sizing: border-box;
+}
+
+.contact-links span {
+  flex-shrink: 0;
+
+  font-size: 7px;
+  line-height: 1;
+  letter-spacing: 1.8px;
+
+  color: #777;
+}
+
+.contact-links strong {
+  min-width: 0;
+
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.3;
+
+  text-align: right;
+
+  white-space: nowrap;
+}
+
+.contact-links a:hover {
+  opacity: 0.55;
+}
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+  .home-contact {
+    padding: 40px 15px;
+  }
+
+  .home-contact-card {
+    max-width: 350px;
+    padding: 27px 22px;
+  }
+
+  .contact-links a {
+    gap: 15px;
+  }
+
+  .contact-links strong {
+    font-size: 9px;
   }
 }
 </style>

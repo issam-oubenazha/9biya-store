@@ -7,25 +7,36 @@ const cart = useCartStore()
 <template>
   <main class="cart-page">
 
-    <div class="cart-header">
-      <p>YOUR BAG</p>
+    <!-- HEADER -->
+    <section class="cart-header">
+      <p>QBIYA / CART</p>
+      <h1>YOUR CART</h1>
+    </section>
 
-      <h1>
-        Panier
-      </h1>
-    </div>
+    <!-- EMPTY CART -->
+    <section
+      v-if="cart.items.length === 0"
+      class="empty-cart"
+    >
+      <h2>YOUR CART IS EMPTY</h2>
 
-    <div v-if="cart.items.length === 0" class="empty-cart">
-      <h2>Votre panier est vide</h2>
+      <p>
+        Discover our latest collection and find your next piece.
+      </p>
 
       <RouterLink to="/shop">
-        CONTINUER MES ACHATS
+        CONTINUE SHOPPING →
       </RouterLink>
-    </div>
+    </section>
 
-    <div v-else class="cart-content">
+    <!-- CART -->
+    <section
+      v-else
+      class="cart-content"
+    >
 
-      <section class="cart-items">
+      <!-- PRODUCTS -->
+      <div class="cart-items">
 
         <article
           v-for="item in cart.items"
@@ -33,27 +44,41 @@ const cart = useCartStore()
           class="cart-item"
         >
 
-          <img
-            :src="item.image"
-            :alt="item.name"
-          />
+          <div class="item-image">
+            <img
+              :src="item.image"
+              :alt="item.name"
+            />
+          </div>
 
           <div class="item-info">
 
-            <h2>{{ item.name }}</h2>
-
-            <p>
-              Taille : {{ item.size }}
+            <p class="item-category">
+              QBIYA
             </p>
 
-            <strong>
-              {{ item.price }} DH
-            </strong>
+            <h2>
+              {{ item.name }}
+            </h2>
 
+            <p class="item-size">
+              SIZE: {{ item.size }}
+            </p>
+
+            <p class="item-price">
+              {{ item.price }} DH
+            </p>
+
+            <!-- QUANTITY -->
             <div class="quantity">
 
               <button
-                @click="cart.decreaseQuantity(item.id, item.size)"
+                @click="
+                  cart.decreaseQuantity(
+                    item.id,
+                    item.size
+                  )
+                "
               >
                 −
               </button>
@@ -63,215 +88,336 @@ const cart = useCartStore()
               </span>
 
               <button
-                @click="cart.increaseQuantity(item.id, item.size)"
+                @click="
+                  cart.increaseQuantity(
+                    item.id,
+                    item.size
+                  )
+                "
               >
                 +
               </button>
 
             </div>
 
+            <!-- REMOVE -->
             <button
               class="remove"
-              @click="cart.removeFromCart(item.id, item.size)"
+              @click="
+                cart.removeFromCart(
+                  item.id,
+                  item.size
+                )
+              "
             >
               REMOVE
             </button>
 
           </div>
 
+          <!-- ITEM TOTAL -->
+          <div class="item-total">
+            {{ item.price * item.quantity }} DH
+          </div>
+
         </article>
 
-      </section>
+      </div>
 
+      <!-- SUMMARY -->
       <aside class="summary">
 
-        <h2>Résumé</h2>
+        <p class="summary-label">
+          ORDER SUMMARY
+        </p>
 
-        <div class="summary-row">
-          <span>Articles</span>
-          <span>{{ cart.totalItems }}</span>
-        </div>
-
-        <div class="summary-row">
-          <span>Sous-total</span>
+        <div class="summary-line">
+          <span>SUBTOTAL</span>
           <span>{{ cart.totalPrice }} DH</span>
         </div>
 
-        <div class="summary-row">
-          <span>Livraison</span>
-          <span>À calculer</span>
+        <div class="summary-line">
+          <span>DELIVERY</span>
+          <span>FREE</span>
         </div>
 
-        <div class="total">
+        <div class="summary-total">
           <span>TOTAL</span>
-
-          <strong>
-            {{ cart.totalPrice }} DH
-          </strong>
+          <strong>{{ cart.totalPrice }} DH</strong>
         </div>
 
         <button class="checkout">
-          PASSER LA COMMANDE
+          PROCEED TO CHECKOUT
         </button>
+
+        <RouterLink
+          to="/shop"
+          class="continue"
+        >
+          CONTINUE SHOPPING
+        </RouterLink>
 
       </aside>
 
-    </div>
+    </section>
 
   </main>
 </template>
 
 <style scoped>
-
 .cart-page {
-  padding: 60px 7%;
+  padding: 70px 6%;
+  min-height: calc(100vh - 78px);
+  background: #fff;
+  color: #111;
 }
 
+/* HEADER */
+
 .cart-header {
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 35px;
   margin-bottom: 50px;
 }
 
 .cart-header p {
-  font-size: 10px;
+  font-size: 9px;
   letter-spacing: 3px;
   color: #777;
+  margin-bottom: 15px;
 }
 
 .cart-header h1 {
-  font-size: 42px;
+  font-size: clamp(40px, 6vw, 80px);
   font-weight: 400;
-  margin-top: 10px;
+  letter-spacing: -3px;
+  margin: 0;
 }
+
+/* EMPTY */
 
 .empty-cart {
   text-align: center;
-  padding: 100px 0;
+  padding: 120px 20px;
 }
 
 .empty-cart h2 {
+  font-size: 30px;
   font-weight: 400;
-  margin-bottom: 30px;
+  margin-bottom: 20px;
+}
+
+.empty-cart p {
+  color: #777;
+  margin-bottom: 35px;
 }
 
 .empty-cart a {
-  background: #111;
-  color: white;
+  color: #111;
   text-decoration: none;
-  padding: 15px 25px;
-  font-size: 11px;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  border-bottom: 1px solid #111;
+  padding-bottom: 6px;
 }
+
+/* CONTENT */
 
 .cart-content {
   display: grid;
-  grid-template-columns: 1fr 350px;
-  gap: 60px;
+  grid-template-columns: 1fr 360px;
+  gap: 80px;
 }
 
+/* ITEM */
+
 .cart-item {
-  display: flex;
+  display: grid;
+  grid-template-columns: 180px 1fr auto;
   gap: 25px;
-  padding-bottom: 25px;
-  margin-bottom: 25px;
+  padding-bottom: 35px;
+  margin-bottom: 35px;
   border-bottom: 1px solid #ddd;
 }
 
-.cart-item img {
+.item-image {
   width: 180px;
-  height: 220px;
-  object-fit: cover;
-  background: #f3f3f3;
+  aspect-ratio: 3 / 4;
+  background: #f5f5f5;
+  overflow: hidden;
 }
 
-.item-info {
-  flex: 1;
+.item-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.item-category {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #777;
+  margin: 5px 0 10px;
 }
 
 .item-info h2 {
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 15px;
+  font-size: 18px;
+  font-weight: 400;
+  margin: 0 0 15px;
 }
 
-.item-info p {
-  font-size: 12px;
-  color: #777;
-  margin-bottom: 15px;
+.item-size {
+  font-size: 10px;
+  letter-spacing: 1px;
+  color: #666;
 }
+
+.item-price {
+  font-size: 13px;
+  margin: 15px 0;
+}
+
+/* QUANTITY */
 
 .quantity {
   display: flex;
   align-items: center;
-  gap: 20px;
-  margin-top: 20px;
+  width: fit-content;
+  border: 1px solid #ddd;
+  margin: 20px 0;
 }
 
 .quantity button {
-  width: 30px;
-  height: 30px;
-  border: 1px solid #ddd;
+  width: 35px;
+  height: 35px;
+  border: none;
   background: white;
   cursor: pointer;
+  font-size: 16px;
 }
+
+.quantity span {
+  width: 35px;
+  text-align: center;
+  font-size: 12px;
+}
+
+/* REMOVE */
 
 .remove {
   border: none;
   background: none;
-  margin-top: 20px;
-  font-size: 10px;
-  letter-spacing: 1px;
+  padding: 0;
+  font-size: 9px;
+  letter-spacing: 2px;
   text-decoration: underline;
   cursor: pointer;
 }
 
-.summary {
-  padding: 30px;
-  background: #f7f7f7;
-  height: fit-content;
+/* ITEM TOTAL */
+
+.item-total {
+  font-size: 13px;
+  white-space: nowrap;
+  padding-top: 10px;
 }
 
-.summary h2 {
-  font-size: 18px;
-  font-weight: 500;
+/* SUMMARY */
+
+.summary {
+  position: sticky;
+  top: 110px;
+  height: fit-content;
+  border: 1px solid #ddd;
+  padding: 30px;
+}
+
+.summary-label {
+  font-size: 10px;
+  letter-spacing: 2px;
   margin-bottom: 30px;
 }
 
-.summary-row {
+.summary-line,
+.summary-total {
   display: flex;
   justify-content: space-between;
-  font-size: 12px;
-  margin-bottom: 20px;
+  padding: 15px 0;
+  font-size: 11px;
 }
 
-.total {
+.summary-total {
   border-top: 1px solid #ddd;
+  margin-top: 10px;
   padding-top: 20px;
-  margin-top: 25px;
-  display: flex;
-  justify-content: space-between;
+  font-size: 13px;
 }
+
+.summary-total strong {
+  font-weight: 500;
+}
+
+/* CHECKOUT */
 
 .checkout {
   width: 100%;
-  height: 50px;
-  margin-top: 30px;
+  border: none;
   background: #111;
   color: white;
-  border: none;
+  padding: 18px;
+  margin-top: 25px;
   cursor: pointer;
-  letter-spacing: 1px;
+  font-size: 10px;
+  letter-spacing: 2px;
 }
 
-@media (max-width: 800px) {
+.checkout:hover {
+  opacity: 0.8;
+}
 
+.continue {
+  display: block;
+  text-align: center;
+  color: #111;
+  text-decoration: none;
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: 20px;
+}
+
+/* MOBILE */
+
+@media (max-width: 900px) {
   .cart-content {
     grid-template-columns: 1fr;
+    gap: 50px;
   }
 
-  .cart-item img {
-    width: 130px;
-    height: 170px;
+  .summary {
+    position: static;
   }
 }
 
+@media (max-width: 600px) {
+  .cart-page {
+    padding: 45px 20px;
+  }
+
+  .cart-item {
+    grid-template-columns: 100px 1fr;
+    gap: 15px;
+  }
+
+  .item-image {
+    width: 100px;
+  }
+
+  .item-total {
+    display: none;
+  }
+
+  .item-info h2 {
+    font-size: 15px;
+  }
+}
 </style>
