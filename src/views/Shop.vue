@@ -1,35 +1,59 @@
 <script setup>
-import { computed, ref } from 'vue'
+import { computed, ref, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
 import { products } from '../data/products'
+
+const route = useRoute()
+const router = useRouter()
 
 const selectedCategory = ref('Tous')
 const selectedSize = ref('Tous')
 const maxPrice = ref(1000)
 const sortBy = ref('default')
 
+/* Read category from URL */
+function loadCategoryFromUrl() {
+  const category = route.query.category
+
+  if (category === 'homme') {
+    selectedCategory.value = 'Homme'
+  } else if (category === 'femme') {
+    selectedCategory.value = 'Femme'
+  } else {
+    selectedCategory.value = 'Tous'
+  }
+}
+
+loadCategoryFromUrl()
+
+/* Update when URL changes */
+watch(
+  () => route.query.category,
+  () => {
+    loadCategoryFromUrl()
+  }
+)
+
+/* Products filtering */
 const filteredProducts = computed(() => {
   let result = [...products]
 
-  // Category filter
   if (selectedCategory.value !== 'Tous') {
     result = result.filter(
       product => product.category === selectedCategory.value
     )
   }
 
-  // Size filter
   if (selectedSize.value !== 'Tous') {
     result = result.filter(
       product => product.sizes.includes(selectedSize.value)
     )
   }
 
-  // Price filter
   result = result.filter(
     product => product.price <= maxPrice.value
   )
 
-  // Sorting
   if (sortBy.value === 'price-low') {
     result.sort((a, b) => a.price - b.price)
   }
@@ -39,11 +63,23 @@ const filteredProducts = computed(() => {
   }
 
   if (sortBy.value === 'name') {
-    result.sort((a, b) => a.name.localeCompare(b.name))
+    result.sort((a, b) =>
+      a.name.localeCompare(b.name)
+    )
   }
 
   return result
 })
+
+/* Reset */
+function resetFilters() {
+  selectedCategory.value = 'Tous'
+  selectedSize.value = 'Tous'
+  maxPrice.value = 1000
+  sortBy.value = 'default'
+
+  router.push('/shop')
+}
 </script>
 
 <template>

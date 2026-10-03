@@ -3,6 +3,7 @@ import { computed, ref } from "vue"
 import { useRoute } from "vue-router"
 import { products } from "../data/products"
 import { useCartStore } from "../stores/cart"
+import { useWishlistStore } from '../stores/wishlist'
 
 const route = useRoute()
 const cart = useCartStore()
@@ -14,6 +15,7 @@ const product = computed(() => {
     item => item.id === Number(route.params.id)
   )
 })
+const wishlist = useWishlistStore()
 
 function addToCart() {
   if (!product.value) return
@@ -64,9 +66,27 @@ function addToCart() {
           QBIYA
         </p>
 
-        <h1>
-          {{ product.name }}
-        </h1>
+        <div class="title-row">
+
+    <h1>{{ product.name }}</h1>
+
+        <button
+            class="wishlist-button"
+            @click="wishlist.toggleWishlist(product)"
+            :aria-label="
+            wishlist.isInWishlist(product.id)
+                ? 'Remove from wishlist'
+                : 'Add to wishlist'
+            "
+        >
+            {{
+            wishlist.isInWishlist(product.id)
+                ? '♥'
+                : '♡'
+            }}
+        </button>
+
+    </div>
 
         <p class="price">
           {{ product.price }} DH
@@ -190,6 +210,39 @@ function addToCart() {
 </template>
 
 <style scoped>
+
+.title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.title-row h1 {
+  margin: 0;
+}
+
+.wishlist-button {
+  width: 48px;
+  height: 48px;
+
+  border: 1px solid #ddd;
+  background: white;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+  cursor: pointer;
+
+  transition: 0.25s;
+}
+
+.wishlist-button:hover {
+  border-color: #111;
+  transform: scale(1.05);
+}
 
 .product-page {
   display: grid;
