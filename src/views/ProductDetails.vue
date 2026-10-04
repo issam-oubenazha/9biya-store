@@ -9,23 +9,36 @@ const route = useRoute()
 const cart = useCartStore()
 
 const selectedSize = ref("M")
+const selectedImageIndex = ref(0)
+const quantity = ref(1)
+const expandedSection = ref('product')
 
 const product = computed(() => {
   return products.find(
     item => item.id === Number(route.params.id)
   )
 })
+const galleryImages = computed(() =>
+  product.value?.images?.length
+    ? product.value.images
+    : product.value?.image
+      ? [product.value.image]
+      : []
+)
 const wishlist = useWishlistStore()
+
+function toggleSection(section) {
+  expandedSection.value = expandedSection.value === section ? '' : section
+}
 
 function addToCart() {
   if (!product.value) return
 
   cart.addToCart(
     product.value,
-    selectedSize.value
+    selectedSize.value,
+    quantity.value
   )
-
-  alert("Produit ajouté au panier ✓")
 }
 </script>
 
@@ -38,27 +51,36 @@ function addToCart() {
 
     <!-- GALLERY -->
 
-    <section class="gallery">
-
-      <div
-        v-for="(image, index) in product.images"
-        :key="index"
-        class="gallery-image"
-      >
-
-        <img
-          :src="image"
-          :alt="product.name"
-        />
-
+    <section class="gallery" v-reveal>
+      <div class="gallery-main">
+        <Transition name="product-image" mode="out-in">
+          <img
+            :key="galleryImages[selectedImageIndex]"
+            :src="galleryImages[selectedImageIndex]"
+            :alt="product.name"
+          />
+        </Transition>
       </div>
 
+      <div v-if="galleryImages.length > 1" class="gallery-thumbnails" aria-label="Product images">
+        <button
+          v-for="(image, index) in galleryImages"
+          :key="`${image}-${index}`"
+          type="button"
+          :class="{ active: selectedImageIndex === index }"
+          :aria-label="`Show product image ${index + 1}`"
+          :aria-pressed="selectedImageIndex === index"
+          @click="selectedImageIndex = index"
+        >
+          <img :src="image" :alt="`${product.name} view ${index + 1}`" />
+        </button>
+      </div>
     </section>
 
 
     <!-- INFORMATION -->
 
-    <section class="product-info">
+    <section class="product-info" v-reveal>
 
       <div class="product-content">
 
@@ -121,66 +143,73 @@ function addToCart() {
           <button
             v-for="size in product.sizes"
             :key="size"
-
+            type="button"
             :class="{
               active: selectedSize === size
             }"
-
+            :aria-pressed="selectedSize === size"
             @click="selectedSize = size"
           >
-
             {{ size }}
-
           </button>
 
         </div>
 
 
-        <!-- ADD TO CART -->
+        <div class="quantity-control" aria-label="Choose quantity">
+          <span>QUANTITY</span>
+          <div>
+            <button
+              type="button"
+              aria-label="Decrease quantity"
+              :disabled="quantity <= 1"
+              @click="quantity = Math.max(1, quantity - 1)"
+            >−</button>
+            <span>{{ quantity }}</span>
+            <button
+              type="button"
+              aria-label="Increase quantity"
+              @click="quantity += 1"
+            >+</button>
+          </div>
+        </div>
 
         <button
           class="add-cart"
+          type="button"
           @click="addToCart"
         >
-
-          ADD TO CART
-
+          ADD TO BAG <span aria-hidden="true">→</span>
         </button>
 
 
         <!-- DESCRIPTION -->
 
         <div class="description">
-
-          <p>
-            {{ product.description }}
-          </p>
-
         </div>
 
 
         <!-- DETAILS -->
 
         <div class="accordion">
-
-          <div>
-            PRODUCT DETAILS
-
-            <span>+</span>
+          <div class="accordion-item">
+            <button type="button" :aria-expanded="expandedSection === 'product'" @click="toggleSection('product')">
+              PRODUCT DETAILS <span>{{ expandedSection === 'product' ? '−' : '+' }}</span>
+            </button>
+            <p v-if="expandedSection === 'product'">{{ product.description }}</p>
           </div>
-
-          <div>
-            DELIVERY
-
-            <span>+</span>
+          <div class="accordion-item">
+            <button type="button" :aria-expanded="expandedSection === 'delivery'" @click="toggleSection('delivery')">
+              DELIVERY <span>{{ expandedSection === 'delivery' ? '−' : '+' }}</span>
+            </button>
+            <p v-if="expandedSection === 'delivery'">Delivery options and timing are confirmed when your order is placed.</p>
           </div>
-
-          <div>
-            RETURNS
-
-            <span>+</span>
+          <div class="accordion-item">
+            <button type="button" :aria-expanded="expandedSection === 'returns'" @click="toggleSection('returns')">
+              RETURNS <span>{{ expandedSection === 'returns' ? '−' : '+' }}</span>
+            </button>
+            <p v-if="expandedSection === 'returns'">For help with a return or exchange, please contact our team.</p>
           </div>
-
         </div>
 
       </div>
@@ -246,7 +275,9 @@ function addToCart() {
 
 .product-page {
   display: grid;
-  grid-template-columns: 65% 35%;
+  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.85fr);
+  gap: clamp(24px, 5vw, 72px);
+  padding: 34px clamp(22px, 5vw, 76px) 80px;
   background: #fff;
 }
 
@@ -256,22 +287,68 @@ function addToCart() {
 
 .gallery {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 2px;
-  background: #eee;
+  grid-template-columns: minmax(0, 1fr);
+  align-content: start;
+  gap: 10px;
 }
 
-.gallery-image {
-  aspect-ratio: 0.78;
-  background: #f4f4f4;
+.gallery-main {
+  aspect-ratio: 0.82;
+  background: var(--paper);
   overflow: hidden;
 }
 
-.gallery-image img {
+.gallery-main img {
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+}
+
+.gallery-thumbnails {
+  display: flex;
+  gap: 9px;
+  overflow-x: auto;
+  padding-bottom: 3px;
+}
+
+.gallery-thumbnails button {
+  width: 66px;
+  aspect-ratio: 3 / 4;
+  flex: 0 0 auto;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid transparent;
+  background: var(--paper);
+  cursor: pointer;
+  opacity: 0.68;
+  transition: opacity 200ms ease, border-color 200ms ease;
+}
+
+.gallery-thumbnails button.active,
+.gallery-thumbnails button:hover {
+  border-color: var(--ink);
+  opacity: 1;
+}
+
+.gallery-thumbnails img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-image-enter-active,
+.product-image-leave-active {
+  transition: opacity 200ms ease, transform 300ms ease;
+}
+
+.product-image-enter-from {
+  opacity: 0;
+  transform: scale(1.015);
+}
+
+.product-image-leave-to {
+  opacity: 0;
 }
 
 /* =========================
@@ -280,49 +357,53 @@ function addToCart() {
 
 .product-info {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: 98px;
+  align-self: start;
+  max-height: calc(100vh - 110px);
+  overflow-y: auto;
   background: #fff;
 }
 
 .product-content {
-  padding: 70px 55px;
+  padding: 34px 24px 40px 0;
 }
 
 .brand {
   font-size: 11px;
   letter-spacing: 3px;
-  margin-bottom: 25px;
-  color: #777;
+  margin-bottom: 22px;
+  color: var(--muted);
 }
 
 h1 {
-  font-size: 24px;
+  font-family: var(--font-display);
+  font-size: 36px;
   font-weight: 500;
-  letter-spacing: 1px;
-  margin-bottom: 20px;
+  letter-spacing: 0;
+  line-height: 1;
+  margin-bottom: 0;
 }
 
 .price {
-  font-size: 16px;
-  margin-bottom: 30px;
+  font-size: 15px;
+  margin: 18px 0 25px;
 }
 
 .separator {
   height: 1px;
-  background: #ddd;
-  margin: 25px 0;
+  background: var(--line);
+  margin: 22px 0;
 }
 
 .label {
   font-size: 10px;
-  letter-spacing: 2px;
+  letter-spacing: 1.5px;
   margin-bottom: 12px;
 }
 
 .color {
   font-size: 13px;
-  color: #555;
+  color: var(--muted);
 }
 
 .sizes {
@@ -333,9 +414,10 @@ h1 {
 
 .sizes button {
   height: 45px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--line);
   background: white;
   cursor: pointer;
+  transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
 }
 
 .sizes button:hover,
@@ -348,34 +430,96 @@ h1 {
 .add-cart {
   width: 100%;
   height: 52px;
-  margin-top: 25px;
-  background: #111;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 18px;
+  margin-top: 22px;
+  background: var(--ink);
   color: white;
   border: none;
   cursor: pointer;
-  font-size: 12px;
-  letter-spacing: 2px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  transition: background 200ms ease;
+}
+
+.add-cart:hover {
+  background: var(--accent);
+}
+
+.quantity-control {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 26px;
+  font-size: 9px;
+  letter-spacing: 1.5px;
+}
+
+.quantity-control > div {
+  display: flex;
+  align-items: center;
+  height: 38px;
+  border: 1px solid var(--line);
+}
+
+.quantity-control button {
+  width: 38px;
+  height: 36px;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.quantity-control button:disabled {
+  color: #aaa;
+  cursor: not-allowed;
+}
+
+.quantity-control div > span {
+  min-width: 26px;
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0;
 }
 
 .description {
   margin-top: 30px;
   font-size: 13px;
   line-height: 1.8;
-  color: #555;
+  color: var(--muted);
 }
 
 .accordion {
-  margin-top: 35px;
-  border-top: 1px solid #ddd;
+  margin-top: 27px;
+  border-top: 1px solid var(--line);
 }
 
-.accordion div {
-  padding: 18px 0;
-  border-bottom: 1px solid #ddd;
-  font-size: 11px;
-  letter-spacing: 1px;
+.accordion-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.accordion-item button {
+  width: 100%;
   display: flex;
   justify-content: space-between;
+  padding: 17px 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 9px;
+  letter-spacing: 1.3px;
+  text-align: left;
+}
+
+.accordion-item p {
+  margin: -3px 0 17px;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.8;
 }
 
 /* =========================
@@ -386,28 +530,34 @@ h1 {
 
   .product-page {
     grid-template-columns: 1fr;
+    padding: 22px 22px 55px;
   }
 
   .product-info {
     position: relative;
-    height: auto;
+    top: auto;
+    max-height: none;
+    overflow: visible;
   }
 
   .product-content {
-    padding: 40px 25px;
+    max-width: 620px;
+    margin: 0 auto;
+    padding: 24px 0 0;
   }
-
-  .gallery {
-    grid-template-columns: 1fr 1fr;
-  }
-
 }
 
 @media (max-width: 500px) {
-
-  .gallery {
-    grid-template-columns: 1fr;
+  .product-page {
+    padding: 14px 15px 44px;
   }
 
+  .gallery-main {
+    aspect-ratio: 0.76;
+  }
+
+  .title-row h1 {
+    font-size: 31px;
+  }
 }
 </style>

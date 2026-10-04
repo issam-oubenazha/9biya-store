@@ -23,7 +23,7 @@ export const products = [
     price: 799,
     category: "Homme",
     color: "Black",
-    image: "/products/abiya1.jpg",
+    image: "/products/qbiya5.jpg",
     sizes: ["M", "L", "XL", "XXL"],
     images: [
       "/products/qbiya5.jpg",
@@ -46,8 +46,8 @@ export const products = [
     images: [
       "/products/qbiya3.jfif",
       "/products/qbiya4.jfif",
-      "/products/qbiya1.jfif",
-      "/products/qbiya5.png"
+      "/products/qbiya1.jpg",
+      "/products/qbiya5.jpg"
     ],
     description:
       "Une pièce légère et élégante adaptée à un style quotidien.",

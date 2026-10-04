@@ -1,8 +1,33 @@
+<script setup>
+import { onMounted, onUnmounted, ref } from 'vue'
+
+const aboutPhotos = [
+  { src: '/products/about.jpg', alt: 'QBIYA contemporary collection' },
+  { src: '/products/modelwomen.jpg', alt: 'QBIYA womenswear campaign' },
+  { src: '/products/modelhome.jpg', alt: 'QBIYA menswear campaign' }
+]
+const currentPhoto = ref(0)
+let photoTimer = 0
+
+onMounted(() => {
+  aboutPhotos.slice(1).forEach(photo => {
+    const image = new Image()
+    image.src = photo.src
+  })
+
+  photoTimer = window.setInterval(() => {
+    currentPhoto.value = (currentPhoto.value + 1) % aboutPhotos.length
+  }, 3000)
+})
+
+onUnmounted(() => window.clearInterval(photoTimer))
+</script>
+
 <template>
   <main class="about-page">
 
     <!-- HERO -->
-    <section class="about-hero">
+    <section class="about-hero" v-reveal>
       <p class="eyebrow">ABOUT QBIYA</p>
 
       <h1>
@@ -17,9 +42,15 @@
     </section>
 
     <!-- STORY -->
-    <section class="about-story">
+    <section class="about-story" v-reveal>
       <div class="story-image">
-        <img src="/products/hero.jpg" alt="QBIYA" />
+        <Transition name="about-photo">
+          <img
+            :key="aboutPhotos[currentPhoto].src"
+            :src="aboutPhotos[currentPhoto].src"
+            :alt="aboutPhotos[currentPhoto].alt"
+          />
+        </Transition>
       </div>
 
       <div class="story-content">
@@ -48,7 +79,7 @@
     </section>
 
     <!-- VALUES -->
-    <section class="values">
+    <section class="values" v-reveal>
 
       <div class="values-header">
         <p class="section-label">WHAT WE BELIEVE IN</p>
@@ -93,7 +124,7 @@
     </section>
 
     <!-- CTA -->
-    <section class="about-cta">
+    <section class="about-cta" v-reveal>
       <p class="section-label">DISCOVER QBIYA</p>
 
       <h2>
@@ -111,155 +142,220 @@
 
 <style scoped>
 .about-page {
-  background: #fff;
-  color: #111;
+  background: var(--paper, #fbfaf8);
+  color: #171714;
 }
 
 /* HERO */
 
 .about-hero {
-  min-height: 80vh;
-  padding: 120px 7%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
+  min-height: min(76vh, 780px);
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 100px 7%;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(250px, 0.48fr);
+  align-content: center;
+  align-items: end;
+  column-gap: 7%;
 }
 
 .eyebrow,
 .section-label {
+  color: #827d74;
   font-size: 9px;
-  letter-spacing: 3px;
-  color: #777;
-  margin-bottom: 25px;
+  letter-spacing: 2.5px;
+  margin: 0 0 24px;
+}
+
+.about-hero .eyebrow {
+  grid-column: 1 / -1;
 }
 
 .about-hero h1 {
-  font-size: clamp(55px, 9vw, 130px);
+  font-family: var(--font-display);
+  font-size: clamp(58px, 8.2vw, 120px);
   font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -5px;
+  line-height: 0.88;
+  letter-spacing: 0;
   margin: 0;
 }
 
 .hero-text {
-  max-width: 520px;
-  margin-top: 45px;
-  font-size: 15px;
-  line-height: 1.8;
-  color: #666;
+  max-width: 380px;
+  margin: 0 0 5px auto;
+  color: #706e68;
+  font-size: 14px;
+  line-height: 1.9;
 }
 
 /* STORY */
 
 .about-story {
   display: grid;
-  grid-template-columns: 55% 45%;
-  min-height: 700px;
+  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  min-height: 650px;
 }
 
 .story-image {
+  position: relative;
+  min-height: 650px;
   overflow: hidden;
+  background: #e7e5e0;
 }
 
 .story-image img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  min-height: 700px;
   object-fit: cover;
+  object-position: center 42%;
+  display: block;
+}
+
+.about-photo-enter-active,
+.about-photo-leave-active {
+  transition: opacity 750ms ease;
+}
+
+.about-photo-enter-active {
+  z-index: 1;
+  animation: about-photo-zoom 3s ease-out both;
+}
+
+.about-photo-enter-from,
+.about-photo-leave-to {
+  opacity: 0;
+}
+
+@keyframes about-photo-zoom {
+  from {
+    transform: scale(1);
+  }
+
+  to {
+    transform: scale(1.045);
+  }
 }
 
 .story-content {
-  padding: 100px 10%;
+  padding: clamp(64px, 8vw, 120px) 10%;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  background: #f1efeb;
 }
 
 .story-content h2 {
-  font-size: 55px;
+  font-family: var(--font-display);
+  font-size: clamp(42px, 4.2vw, 64px);
   font-weight: 400;
   line-height: 0.95;
-  letter-spacing: -2px;
-  margin: 0 0 40px;
+  letter-spacing: 0;
+  margin: 0 0 30px;
 }
 
 .story-content p:not(.section-label) {
   max-width: 450px;
-  font-size: 14px;
+  color: #706e68;
+  font-size: 13px;
   line-height: 1.9;
-  color: #666;
-  margin-bottom: 20px;
+  margin: 0 0 16px;
 }
 
 /* VALUES */
 
 .values {
-  padding: 140px 7%;
+  max-width: 1480px;
+  margin: 0 auto;
+  padding: 130px 7%;
+}
+
+.values-header {
+  display: grid;
+  grid-template-columns: 1fr 1.5fr;
+  align-items: start;
+  gap: 30px;
 }
 
 .values-header h2 {
-  font-size: clamp(50px, 7vw, 100px);
+  font-family: var(--font-display);
+  font-size: clamp(48px, 6.5vw, 92px);
   font-weight: 400;
-  line-height: 0.95;
-  letter-spacing: -4px;
-  margin: 0 0 100px;
+  line-height: 0.9;
+  letter-spacing: 0;
+  margin: 0 0 76px;
 }
 
 .values-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 60px;
-  border-top: 1px solid #ddd;
-  padding-top: 40px;
+  gap: 36px;
 }
 
 .value span {
   font-size: 10px;
-  color: #888;
+  color: #94735e;
 }
 
 .value h3 {
   font-size: 13px;
   font-weight: 500;
-  letter-spacing: 2px;
-  margin: 30px 0 20px;
+  letter-spacing: 1.7px;
+  margin: 22px 0 14px;
 }
 
 .value p {
   max-width: 280px;
-  color: #666;
+  color: #706e68;
   font-size: 13px;
-  line-height: 1.8;
+  line-height: 1.9;
+  margin: 0;
+}
+
+.value::before {
+  display: block;
+  width: 100%;
+  height: 1px;
+  background: #dedad3;
+  content: '';
 }
 
 /* CTA */
 
 .about-cta {
-  padding: 150px 7%;
-  background: #111;
-  color: #fff;
+  padding: 120px 7%;
+  background: #f1efeb;
+  color: #171714;
 }
 
 .about-cta .section-label {
-  color: #aaa;
+  color: #827d74;
 }
 
 .about-cta h2 {
-  font-size: clamp(60px, 10vw, 140px);
+  font-family: var(--font-display);
+  font-size: clamp(60px, 9vw, 126px);
   font-weight: 400;
   line-height: 0.9;
-  letter-spacing: -5px;
-  margin: 0 0 60px;
+  letter-spacing: 0;
+  margin: 0 0 42px;
 }
 
 .about-cta a {
   display: inline-block;
-  color: #fff;
+  color: #171714;
   text-decoration: none;
   font-size: 9px;
-  letter-spacing: 2px;
-  border-bottom: 1px solid #fff;
-  padding-bottom: 8px;
+  letter-spacing: 1.8px;
+  border-bottom: 1px solid #94735e;
+  padding-bottom: 9px;
+  transition: color 180ms ease;
+}
+
+.about-cta a:hover {
+  color: #94735e;
 }
 
 /* MOBILE */
@@ -267,45 +363,66 @@
 @media (max-width: 800px) {
 
   .about-hero {
-    min-height: 70vh;
-    padding: 80px 6%;
+    min-height: 0;
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+    padding: 92px 6%;
   }
 
   .about-hero h1 {
-    letter-spacing: -3px;
+    letter-spacing: 0;
+  }
+
+  .hero-text {
+    margin: 0;
+    max-width: 460px;
   }
 
   .about-story {
     grid-template-columns: 1fr;
   }
 
-  .story-image img {
-    min-height: 500px;
+  .story-image {
+    height: min(105vw, 620px);
+    min-height: 0;
   }
 
   .story-content {
-    padding: 80px 6%;
+    padding: 72px 7%;
   }
 
   .story-content h2 {
-    font-size: 45px;
+    font-size: clamp(42px, 8vw, 58px);
   }
 
   .values {
-    padding: 90px 6%;
+    padding: 90px 7%;
+  }
+
+  .values-header {
+    grid-template-columns: 1fr;
+    gap: 0;
   }
 
   .values-header h2 {
-    margin-bottom: 60px;
+    margin-bottom: 52px;
   }
 
   .values-grid {
     grid-template-columns: 1fr;
-    gap: 50px;
+    gap: 34px;
   }
 
   .about-cta {
-    padding: 100px 6%;
+    padding: 90px 7%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .about-photo-enter-active,
+  .about-photo-leave-active {
+    transition: none;
+    animation: none;
   }
 }
 </style>

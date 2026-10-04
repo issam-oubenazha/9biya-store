@@ -2,6 +2,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { products } from '../data/products'
+import ProductCard from '../components/ProductCard.vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -86,7 +87,7 @@ function resetFilters() {
   <main class="shop-page">
 
     <!-- Header -->
-    <section class="shop-header">
+    <section class="shop-header" v-reveal>
 
       <p class="eyebrow">
         QBIYA COLLECTION
@@ -104,7 +105,7 @@ function resetFilters() {
     </section>
 
     <!-- Filters -->
-    <section class="filters">
+    <section class="filters" v-reveal>
 
       <!-- Category -->
       <div class="filter-group">
@@ -213,19 +214,14 @@ function resetFilters() {
     </section>
 
     <!-- Results -->
-    <div class="results-info">
+    <div class="results-info" v-reveal>
 
       <span>
         {{ filteredProducts.length }} PRODUCTS
       </span>
 
       <button
-        @click="
-          selectedCategory = 'Tous';
-          selectedSize = 'Tous';
-          maxPrice = 1000;
-          sortBy = 'default'
-        "
+        @click="resetFilters"
       >
         RESET FILTERS
       </button>
@@ -233,51 +229,12 @@ function resetFilters() {
     </div>
 
     <!-- Products -->
-    <section
-      v-if="filteredProducts.length"
-      class="product-grid"
-    >
-
-      <RouterLink
+    <section v-if="filteredProducts.length" class="product-grid">
+      <ProductCard
         v-for="product in filteredProducts"
         :key="product.id"
-        :to="`/product/${product.id}`"
-        class="product-card"
-      >
-
-        <div class="product-image">
-
-          <img
-            :src="product.images?.[0] || product.image"
-            :alt="product.name"
-          />
-
-          <div class="quick-view">
-            VIEW PRODUCT
-          </div>
-
-        </div>
-
-        <div class="product-info">
-
-          <div>
-            <p class="category">
-              {{ product.category }}
-            </p>
-
-            <h2>
-              {{ product.name }}
-            </h2>
-          </div>
-
-          <p class="price">
-            {{ product.price }} DH
-          </p>
-
-        </div>
-
-      </RouterLink>
-
+        :product="product"
+      />
     </section>
 
     <!-- Empty -->
@@ -302,9 +259,9 @@ function resetFilters() {
 <style scoped>
 
 .shop-page {
-  background: #fff;
+  background: var(--paper, #fbfaf8);
   min-height: 100vh;
-  padding-bottom: 100px;
+  padding-bottom: 96px;
 }
 
 /* =========================
@@ -312,30 +269,39 @@ function resetFilters() {
 ========================= */
 
 .shop-header {
-  text-align: center;
-  padding: 80px 20px 60px;
+  display: grid;
+  grid-template-columns: 1fr minmax(260px, 0.55fr);
+  align-items: end;
+  column-gap: 48px;
+  max-width: 1380px;
+  margin: 0 auto;
+  padding: 86px 6% 54px;
+  border-bottom: 1px solid #e5e1da;
 }
 
 .eyebrow {
-  font-size: 10px;
-  letter-spacing: 4px;
-  color: #777;
-  margin-bottom: 20px;
+  grid-column: 1 / -1;
+  margin: 0 0 18px;
+  color: #827d74;
+  font-size: 9px;
+  letter-spacing: 2.5px;
 }
 
 .shop-header h1 {
-  font-size: 50px;
+  font-family: var(--font-display);
+  font-size: clamp(72px, 11vw, 148px);
   font-weight: 400;
-  letter-spacing: 3px;
-  margin-bottom: 20px;
+  line-height: 0.78;
+  letter-spacing: 0;
+  margin: 0;
 }
 
 .intro {
-  max-width: 500px;
-  margin: auto;
-  color: #777;
-  font-size: 13px;
-  line-height: 1.8;
+  max-width: 390px;
+  margin: 0 0 4px auto;
+  color: #706e68;
+  font-size: 14px;
+  line-height: 1.9;
 }
 
 /* =========================
@@ -343,38 +309,49 @@ function resetFilters() {
 ========================= */
 
 .filters {
-  margin: 0 35px;
-  padding: 20px 0;
-  border-top: 1px solid #ddd;
-  border-bottom: 1px solid #ddd;
-
+  max-width: 1240px;
+  margin: 28px auto 0;
+  padding: 20px 24px;
+  background: #f1efeb;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
+  gap: 28px;
 }
 
 .filter-group {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  justify-content: center;
+  gap: 9px;
 }
 
 .filter-group label {
-  font-size: 9px;
-  letter-spacing: 2px;
-  color: #777;
+  color: #817d75;
+  font-size: 8px;
+  letter-spacing: 1.6px;
 }
 
 .filter-group select {
-  border: none;
-  background: white;
+  width: 100%;
+  padding: 4px 18px 7px 0;
+  border: 0;
+  border-bottom: 1px solid #d4d0c8;
+  border-radius: 0;
+  background: transparent;
+  color: #24231f;
   font-size: 12px;
   outline: none;
   cursor: pointer;
 }
 
+.filter-group select:focus-visible {
+  outline: 1px solid #94735e;
+  outline-offset: 4px;
+}
+
 .price-filter input {
   width: 100%;
+  accent-color: #80634f;
 }
 
 /* =========================
@@ -382,23 +359,32 @@ function resetFilters() {
 ========================= */
 
 .results-info {
-  padding: 25px 35px;
-
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 34px 0 18px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-
-  font-size: 10px;
-  letter-spacing: 2px;
+  color: #77736c;
+  font-size: 9px;
+  letter-spacing: 1.6px;
 }
 
 .results-info button {
   background: none;
   border: none;
-  text-decoration: underline;
+  border-bottom: 1px solid #aaa49a;
+  padding: 0 0 4px;
+  color: #393731;
   cursor: pointer;
   font-size: 9px;
-  letter-spacing: 1px;
+  letter-spacing: 1.2px;
+  transition: color 180ms ease, border-color 180ms ease;
+}
+
+.results-info button:hover {
+  color: #94735e;
+  border-color: #94735e;
 }
 
 /* =========================
@@ -406,11 +392,11 @@ function resetFilters() {
 ========================= */
 
 .product-grid {
+  max-width: 1240px;
+  margin: 0 auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 2px;
-
-  background: #eee;
+  gap: 44px 22px;
 }
 
 .product-card {
@@ -520,49 +506,59 @@ function resetFilters() {
 
 @media (max-width: 1000px) {
 
+  .filters,
+  .results-info,
   .product-grid {
-    grid-template-columns: repeat(3, 1fr);
+    margin-right: 28px;
+    margin-left: 28px;
   }
 
   .filters {
     grid-template-columns: repeat(2, 1fr);
   }
 
+  .product-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 650px) {
 
   .shop-header {
-    padding: 50px 20px;
+    grid-template-columns: 1fr;
+    row-gap: 20px;
+    padding: 60px 22px 38px;
+  }
+
+  .eyebrow {
+    margin-bottom: 0;
   }
 
   .shop-header h1 {
-    font-size: 38px;
+    font-size: clamp(64px, 18vw, 100px);
+  }
+
+  .intro {
+    margin: 0;
+    font-size: 13px;
   }
 
   .filters {
-    margin: 0 15px;
+    margin: 20px 15px 0;
+    padding: 16px;
     grid-template-columns: 1fr 1fr;
+    gap: 20px 16px;
   }
 
   .results-info {
-    padding: 20px 15px;
+    margin: 0 15px;
+    padding: 26px 0 15px;
   }
 
   .product-grid {
+    margin: 0 15px;
     grid-template-columns: repeat(2, 1fr);
-  }
-
-  .product-info {
-    padding: 12px;
-  }
-
-  .product-info h2 {
-    font-size: 11px;
-  }
-
-  .price {
-    font-size: 10px;
+    gap: 32px 12px;
   }
 
 }

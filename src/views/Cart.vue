@@ -8,7 +8,7 @@ const cart = useCartStore()
   <main class="cart-page">
 
     <!-- HEADER -->
-    <section class="cart-header">
+    <section class="cart-header" v-reveal>
       <p>QBIYA / CART</p>
       <h1>YOUR CART</h1>
     </section>
@@ -17,6 +17,7 @@ const cart = useCartStore()
     <section
       v-if="cart.items.length === 0"
       class="empty-cart"
+      v-reveal
     >
       <h2>YOUR CART IS EMPTY</h2>
 
@@ -33,6 +34,7 @@ const cart = useCartStore()
     <section
       v-else
       class="cart-content"
+      v-reveal
     >
 
       <!-- PRODUCTS -->
@@ -42,6 +44,7 @@ const cart = useCartStore()
           v-for="item in cart.items"
           :key="`${item.id}-${item.size}`"
           class="cart-item"
+          v-reveal
         >
 
           <div class="item-image">
@@ -73,6 +76,8 @@ const cart = useCartStore()
             <div class="quantity">
 
               <button
+                type="button"
+                :aria-label="`Decrease ${item.name} quantity`"
                 @click="
                   cart.decreaseQuantity(
                     item.id,
@@ -88,6 +93,8 @@ const cart = useCartStore()
               </span>
 
               <button
+                type="button"
+                :aria-label="`Increase ${item.name} quantity`"
                 @click="
                   cart.increaseQuantity(
                     item.id,
@@ -103,6 +110,8 @@ const cart = useCartStore()
             <!-- REMOVE -->
             <button
               class="remove"
+              type="button"
+              :aria-label="`Remove ${item.name} from cart`"
               @click="
                 cart.removeFromCart(
                   item.id,
@@ -146,7 +155,7 @@ const cart = useCartStore()
           <strong>{{ cart.totalPrice }} DH</strong>
         </div>
 
-        <button class="checkout">
+        <button class="checkout" type="button">
           PROCEED TO CHECKOUT
         </button>
 
@@ -166,7 +175,7 @@ const cart = useCartStore()
 
 <style scoped>
 .cart-page {
-  padding: 70px 6%;
+  padding: 64px clamp(20px, 6vw, 88px) 90px;
   min-height: calc(100vh - 78px);
   background: #fff;
   color: #111;
@@ -188,9 +197,10 @@ const cart = useCartStore()
 }
 
 .cart-header h1 {
+  font-family: var(--font-display);
   font-size: clamp(40px, 6vw, 80px);
   font-weight: 400;
-  letter-spacing: -3px;
+  letter-spacing: 0;
   margin: 0;
 }
 
@@ -202,6 +212,7 @@ const cart = useCartStore()
 }
 
 .empty-cart h2 {
+  font-family: var(--font-display);
   font-size: 30px;
   font-weight: 400;
   margin-bottom: 20px;
@@ -225,25 +236,25 @@ const cart = useCartStore()
 
 .cart-content {
   display: grid;
-  grid-template-columns: 1fr 360px;
-  gap: 80px;
+  grid-template-columns: minmax(0, 1fr) minmax(290px, 340px);
+  gap: clamp(35px, 7vw, 90px);
 }
 
 /* ITEM */
 
 .cart-item {
   display: grid;
-  grid-template-columns: 180px 1fr auto;
-  gap: 25px;
-  padding-bottom: 35px;
-  margin-bottom: 35px;
-  border-bottom: 1px solid #ddd;
+  grid-template-columns: 150px minmax(0, 1fr) auto;
+  gap: 22px;
+  padding-bottom: 28px;
+  margin-bottom: 28px;
+  border-bottom: 1px solid var(--line);
 }
 
 .item-image {
-  width: 180px;
+  width: 150px;
   aspect-ratio: 3 / 4;
-  background: #f5f5f5;
+  background: var(--paper);
   overflow: hidden;
 }
 
@@ -251,6 +262,11 @@ const cart = useCartStore()
   width: 100%;
   height: 100%;
   object-fit: cover;
+  transition: transform 700ms cubic-bezier(0.2, 0.65, 0.3, 1);
+}
+
+.item-image:hover img {
+  transform: scale(1.035);
 }
 
 .item-category {
@@ -261,7 +277,8 @@ const cart = useCartStore()
 }
 
 .item-info h2 {
-  font-size: 18px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 400;
   margin: 0 0 15px;
 }
@@ -283,7 +300,7 @@ const cart = useCartStore()
   display: flex;
   align-items: center;
   width: fit-content;
-  border: 1px solid #ddd;
+  border: 1px solid var(--line);
   margin: 20px 0;
 }
 
@@ -294,6 +311,11 @@ const cart = useCartStore()
   background: white;
   cursor: pointer;
   font-size: 16px;
+  transition: background 180ms ease;
+}
+
+.quantity button:hover {
+  background: var(--paper);
 }
 
 .quantity span {
@@ -328,8 +350,9 @@ const cart = useCartStore()
   position: sticky;
   top: 110px;
   height: fit-content;
-  border: 1px solid #ddd;
+  border: 1px solid var(--line);
   padding: 30px;
+  background: #fff;
 }
 
 .summary-label {
@@ -347,7 +370,7 @@ const cart = useCartStore()
 }
 
 .summary-total {
-  border-top: 1px solid #ddd;
+  border-top: 1px solid var(--line);
   margin-top: 10px;
   padding-top: 20px;
   font-size: 13px;
@@ -362,7 +385,7 @@ const cart = useCartStore()
 .checkout {
   width: 100%;
   border: none;
-  background: #111;
+  background: var(--ink);
   color: white;
   padding: 18px;
   margin-top: 25px;
@@ -372,7 +395,7 @@ const cart = useCartStore()
 }
 
 .checkout:hover {
-  opacity: 0.8;
+  background: var(--accent);
 }
 
 .continue {
@@ -383,6 +406,11 @@ const cart = useCartStore()
   font-size: 9px;
   letter-spacing: 2px;
   margin-top: 20px;
+  transition: color 180ms ease;
+}
+
+.continue:hover {
+  color: var(--accent);
 }
 
 /* MOBILE */
@@ -404,7 +432,7 @@ const cart = useCartStore()
   }
 
   .cart-item {
-    grid-template-columns: 100px 1fr;
+    grid-template-columns: 100px minmax(0, 1fr);
     gap: 15px;
   }
 
