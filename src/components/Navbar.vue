@@ -1,15 +1,17 @@
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useCartStore } from '../stores/cart'
 import { products } from '../data/products'
 import { useWishlistStore } from '../stores/wishlist'
+import CartDrawer from './CartDrawer.vue'
 
 const menuOpen = ref(false)
 const searchOpen = ref(false)
 const searchQuery = ref('')
-
 const cart = useCartStore()
-
+const wishlist = useWishlistStore()
+const accountOpen = ref(false)
+const isScrolled = ref(false)
 
 const searchResults = computed(() => {
   if (!searchQuery.value.trim()) return []
@@ -27,7 +29,29 @@ function closeSearch() {
   searchOpen.value = false
   searchQuery.value = ''
 }
-const wishlist = useWishlistStore()
+
+function updateScrollState() {
+  isScrolled.value = window.scrollY > 12
+}
+
+function handleEscape(event) {
+  if (event.key === 'Escape') {
+    closeSearch()
+    menuOpen.value = false
+    accountOpen.value = false
+  }
+}
+
+onMounted(() => {
+  updateScrollState()
+  window.addEventListener('scroll', updateScrollState, { passive: true })
+  window.addEventListener('keydown', handleEscape)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', updateScrollState)
+  window.removeEventListener('keydown', handleEscape)
+})
 </script>
 
 <template>
@@ -85,154 +109,83 @@ const wishlist = useWishlistStore()
 
         </div>
         </div>
-  <header class="navbar">
+  <header class="navbar" :class="{ 'is-scrolled': isScrolled }">
+    <RouterLink to="/" class="logo" aria-label="QBIYA home">QBIYA</RouterLink>
 
-    <!-- LOGO -->
-    <RouterLink to="/" class="logo">
-      QBIYA
-    </RouterLink>
-
-    <!-- DESKTOP NAV -->
-    <nav class="desktop-nav">
-      <RouterLink to="/">NEW IN</RouterLink>
-      <RouterLink to="/shop">SHOP</RouterLink>
+    <nav class="desktop-nav" aria-label="Main navigation">
+      <RouterLink to="/shop">NEW IN</RouterLink>
+      <RouterLink to="/shop">COLLECTION</RouterLink>
       <RouterLink to="/shop?category=homme">HOMME</RouterLink>
       <RouterLink to="/shop?category=femme">FEMME</RouterLink>
       <RouterLink to="/about">ABOUT</RouterLink>
     </nav>
 
-    <!-- ACTIONS -->
     <div class="actions">
-
-        <button class="icon-button"
-             aria-label="Search"
-            @click="searchOpen = !searchOpen"
-        >
-             ⌕
-        </button>
-        <RouterLink
-            to="/wishlist"
-            class="wishlist-link"
-            aria-label="Wishlist"
-            >
-            ♡
-
-            <span
-                v-if="wishlist.totalItems > 0"
-                class="wishlist-count"
-            >
-                {{ wishlist.totalItems }}
-            </span>
-         </RouterLink>
-
-      <RouterLink
-        to="/account"
+      <button
         class="icon-button"
-        aria-label="Account"
+        type="button"
+        aria-label="Search products"
+        @click="searchOpen = true"
       >
-        ♙
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.6" /><path d="m16 16 4.4 4.4" /></svg>
+      </button>
+
+      <RouterLink to="/wishlist" class="icon-button wishlist-link" aria-label="Wishlist">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.4 8.6c0 4.2-8.4 10-8.4 10s-8.4-5.8-8.4-10a4.4 4.4 0 0 1 8.4-1.7 4.4 4.4 0 0 1 8.4 1.7Z" /></svg>
+        <span v-if="wishlist.totalItems > 0" class="count-badge">{{ wishlist.totalItems }}</span>
       </RouterLink>
 
-      <RouterLink
-        to="/cart"
-        class="cart"
-      >
-        ♧
-
-        <span
-          v-if="cart.totalItems > 0"
-          class="cart-count"
+      <div class="account-wrap">
+        <button
+          class="icon-button"
+          type="button"
+          aria-label="Account shortcuts"
+          aria-expanded="accountOpen"
+          @click="accountOpen = !accountOpen"
         >
-          {{ cart.totalItems }}
-        </span>
-      </RouterLink>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="3.5" /><path d="M4.8 20c.6-3.5 3.3-5.5 7.2-5.5s6.6 2 7.2 5.5" /></svg>
+        </button>
+        <div v-if="accountOpen" class="account-popover">
+          <p>YOUR QBIYA</p>
+          <span>Saved pieces and customer care, all in one place.</span>
+          <RouterLink to="/wishlist" @click="accountOpen = false">VIEW WISHLIST <span>→</span></RouterLink>
+          <RouterLink to="/contact" @click="accountOpen = false">CONTACT US <span>→</span></RouterLink>
+        </div>
+      </div>
+
+      <button
+        class="icon-button bag-button"
+        type="button"
+        aria-label="Open shopping bag"
+        @click="cart.openDrawer"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 8h14l1 13H4L5 8Z" /><path d="M9 9V6a3 3 0 0 1 6 0v3" /></svg>
+        <span v-if="cart.totalItems > 0" class="count-badge">{{ cart.totalItems }}</span>
+      </button>
 
       <button
         class="menu-button"
+        type="button"
+        :aria-expanded="menuOpen"
+        aria-label="Toggle menu"
         @click="menuOpen = !menuOpen"
-        aria-label="Menu"
       >
-        ☰
+        <span></span><span></span>
       </button>
-
     </div>
 
-    <!-- MOBILE MENU -->
-    <div
-      v-if="menuOpen"
-      class="mobile-menu"
-    >
-      <RouterLink
-        to="/"
-        @click="menuOpen = false"
-      >
-        NEW IN
-      </RouterLink>
-
-      <RouterLink
-        to="/shop"
-        @click="menuOpen = false"
-      >
-        SHOP
-      </RouterLink>
-
-      <RouterLink
-        to="/shop?category=homme"
-        @click="menuOpen = false"
-      >
-        HOMME
-      </RouterLink>
-
-      <RouterLink
-        to="/shop?category=femme"
-        @click="menuOpen = false"
-      >
-        FEMME
-      </RouterLink>
-
-      <RouterLink
-        to="/about"
-        @click="menuOpen = false"
-      >
-        ABOUT
-      </RouterLink>
-    </div>
-
+    <Transition name="mobile-menu">
+      <nav v-if="menuOpen" class="mobile-menu" aria-label="Mobile navigation">
+        <RouterLink to="/shop" @click="menuOpen = false">NEW IN</RouterLink>
+        <RouterLink to="/shop" @click="menuOpen = false">COLLECTION</RouterLink>
+        <RouterLink to="/shop?category=homme" @click="menuOpen = false">HOMME</RouterLink>
+        <RouterLink to="/shop?category=femme" @click="menuOpen = false">FEMME</RouterLink>
+        <RouterLink to="/about" @click="menuOpen = false">ABOUT</RouterLink>
+        <RouterLink to="/contact" @click="menuOpen = false">CONTACT</RouterLink>
+      </nav>
+    </Transition>
   </header>
-  <nav class="bottom-nav">
-
-  <RouterLink to="/" class="bottom-nav-item" aria-label="Home">
-    <span>⌂</span>
-  </RouterLink>
-
-  <RouterLink to="/shop" class="bottom-nav-item" aria-label="Shop">
-    <span>◫</span>
-  </RouterLink>
-
-  <RouterLink to="/wishlist" class="bottom-nav-item" aria-label="Wishlist">
-    <span>♡</span>
-    <small v-if="wishlist.totalItems > 0">
-      {{ wishlist.totalItems }}
-    </small>
-  </RouterLink>
-
-  <RouterLink to="/about" class="bottom-nav-item" aria-label="About">
-    <span>◎</span>
-  </RouterLink>
-
-  <RouterLink to="/contact" class="bottom-nav-item" aria-label="Contact">
-    <span>✉</span>
-  </RouterLink>
-
-  <RouterLink to="/cart" class="bottom-nav-item" aria-label="Cart">
-    <span>♧</span>
-
-    <small v-if="cart.totalItems > 0">
-      {{ cart.totalItems }}
-    </small>
-  </RouterLink>
-
-</nav>
+  <CartDrawer />
 </template>
 
 <style scoped>
@@ -618,5 +571,338 @@ const wishlist = useWishlistStore()
   font-size: 8px;
   line-height: 1;
 }
+}
+</style>
+
+<style scoped>
+:global(body) {
+  padding-bottom: 0;
+}
+
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 2000;
+  height: 78px;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  align-items: center;
+  padding: 0 clamp(22px, 5vw, 76px);
+  border-bottom: 1px solid rgb(23 23 20 / 7%);
+  background: rgb(255 255 255 / 88%);
+  backdrop-filter: blur(14px);
+  transition: background 250ms ease, box-shadow 250ms ease;
+}
+
+.navbar.is-scrolled {
+  background: rgb(255 255 255 / 97%);
+  box-shadow: 0 5px 20px rgb(23 23 20 / 5%);
+}
+
+.logo {
+  justify-self: start;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-decoration: none;
+}
+
+.desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: clamp(18px, 2.5vw, 38px);
+  margin: 0;
+}
+
+.desktop-nav a {
+  position: relative;
+  padding: 9px 0;
+  color: var(--ink);
+  font-size: 9px;
+  letter-spacing: 1.6px;
+  text-decoration: none;
+}
+
+.desktop-nav a::after {
+  position: absolute;
+  right: 0;
+  bottom: 3px;
+  left: 0;
+  height: 1px;
+  content: '';
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 250ms ease;
+}
+
+.desktop-nav a:hover::after,
+.desktop-nav a.router-link-active::after {
+  transform: scaleX(1);
+}
+
+.actions {
+  justify-self: end;
+  display: flex;
+  align-items: center;
+  gap: 19px;
+}
+
+.icon-button,
+.wishlist-link {
+  position: relative;
+  width: 24px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.icon-button svg {
+  width: 19px;
+  height: 19px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.35;
+  transition: transform 200ms ease;
+}
+
+.icon-button:hover svg {
+  transform: translateY(-1px);
+}
+
+.count-badge {
+  position: absolute;
+  top: 0;
+  right: -8px;
+  min-width: 15px;
+  height: 15px;
+  display: grid;
+  place-items: center;
+  padding: 0 3px;
+  border-radius: 50%;
+  background: var(--ink);
+  color: #fff;
+  font-size: 8px;
+  line-height: 1;
+}
+
+.account-wrap {
+  position: relative;
+}
+
+.account-popover {
+  position: absolute;
+  top: calc(100% + 20px);
+  right: -50px;
+  width: 260px;
+  padding: 23px;
+  border: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 16px 38px rgb(23 23 20 / 10%);
+  animation: popover-in 180ms ease both;
+}
+
+.account-popover > p {
+  margin: 0 0 8px;
+  font-size: 10px;
+  letter-spacing: 1.5px;
+}
+
+.account-popover > span {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.account-popover a {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  border-top: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 9px;
+  letter-spacing: 1.2px;
+  text-decoration: none;
+}
+
+.account-popover a:hover {
+  color: var(--accent);
+}
+
+.menu-button {
+  display: none;
+  width: 28px;
+  height: 32px;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+.menu-button span {
+  width: 18px;
+  height: 1px;
+  background: var(--ink);
+}
+
+.mobile-menu {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 22px 20px;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+  box-shadow: 0 12px 20px rgb(23 23 20 / 5%);
+}
+
+.mobile-menu a {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 10px;
+  letter-spacing: 1.7px;
+  text-decoration: none;
+}
+
+.mobile-menu a:last-child {
+  border-bottom: 0;
+}
+
+.mobile-menu-enter-active,
+.mobile-menu-leave-active {
+  transition: opacity 180ms ease, transform 180ms ease;
+}
+
+.mobile-menu-enter-from,
+.mobile-menu-leave-to {
+  opacity: 0;
+  transform: translateY(-8px);
+}
+
+.search-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2500;
+  overflow-y: auto;
+  background: rgb(255 255 255 / 98%);
+  animation: search-in 220ms ease both;
+}
+
+.search-box {
+  width: min(850px, 100%);
+  margin: 0 auto;
+  padding: clamp(95px, 14vh, 150px) 28px 48px;
+}
+
+.search-top {
+  border-color: var(--ink);
+}
+
+.search-top input {
+  font-family: var(--font-display);
+  font-size: clamp(28px, 5vw, 44px);
+}
+
+.search-top button {
+  width: 40px;
+  height: 40px;
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: 27px;
+}
+
+.search-results {
+  gap: 16px 28px;
+}
+
+.search-result {
+  align-items: center;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 14px;
+}
+
+.search-result img {
+  width: 72px;
+  height: 88px;
+}
+
+.search-result p {
+  color: var(--ink);
+  font-size: 10px;
+  letter-spacing: 1.2px;
+}
+
+.no-results {
+  font-size: 10px;
+  letter-spacing: 1.4px;
+}
+
+@keyframes search-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes popover-in {
+  from { opacity: 0; transform: translateY(-5px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 900px) {
+  .navbar {
+    height: 70px;
+    grid-template-columns: 1fr auto;
+    padding: 0 22px;
+  }
+
+  .desktop-nav {
+    display: none;
+  }
+
+  .actions {
+    gap: 15px;
+  }
+
+  .menu-button {
+    display: flex;
+  }
+}
+
+@media (max-width: 420px) {
+  .navbar {
+    padding: 0 16px;
+  }
+
+  .logo {
+    font-size: 17px;
+  }
+
+  .actions {
+    gap: 11px;
+  }
+
+  .search-box {
+    padding-right: 20px;
+    padding-left: 20px;
+  }
 }
 </style>

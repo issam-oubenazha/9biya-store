@@ -1,46 +1,52 @@
 <script setup>
+import { useCartStore } from '../stores/cart'
+
 defineProps({
   product: {
     type: Object,
     required: true
   }
 })
+
+const cart = useCartStore()
 </script>
 
 <template>
-  <article class="product-card">
-
+  <article class="product-card" v-reveal>
     <RouterLink
       :to="`/product/${product.id}`"
       class="product-image"
+      :aria-label="`View ${product.name}`"
     >
       <img
+        class="primary-image"
         :src="product.images?.[0] || product.image"
         :alt="product.name"
+      />
+      <img
+        v-if="product.images?.[1] && product.images[1] !== product.images[0]"
+        class="secondary-image"
+        :src="product.images[1]"
+        :alt="`${product.name}, alternate view`"
+        loading="lazy"
       />
     </RouterLink>
 
     <div class="product-info">
-
-      <p class="category">
-        {{ product.category }}
-      </p>
-
-      <h3>{{ product.name }}</h3>
-
-      <p class="price">
-        {{ product.price }} DH
-      </p>
-
-      <RouterLink
-        :to="`/product/${product.id}`"
-        class="view-product"
+      <div class="product-copy">
+        <p class="category">{{ product.category }}</p>
+        <h3>{{ product.name }}</h3>
+        <p class="price">{{ product.price }} DH</p>
+      </div>
+      <button
+        class="quick-add"
+        type="button"
+        :aria-label="`Add ${product.name} to bag`"
+        @click="cart.addToCart(product, product.sizes?.[0] || 'M')"
       >
-        VIEW PRODUCT →
-      </RouterLink>
-
+        <span>ADD TO BAG</span><span aria-hidden="true">+</span>
+      </button>
     </div>
-
   </article>
 </template>
 
@@ -50,60 +56,107 @@ defineProps({
 }
 
 .product-image {
+  position: relative;
   display: block;
   width: 100%;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--paper);
 }
 
 .product-image img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.5s ease;
+  transition: transform 850ms cubic-bezier(0.2, 0.65, 0.3, 1), opacity 500ms ease;
 }
 
-.product-image:hover img {
-  transform: scale(1.04);
+.product-image .secondary-image {
+  opacity: 0;
+}
+
+.product-card:hover .product-image img {
+  transform: scale(1.045);
+}
+
+.product-card:hover .product-image .secondary-image {
+  opacity: 1;
 }
 
 .product-info {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
   padding-top: 15px;
 }
 
 .category {
+  margin: 0 0 7px;
+  color: var(--muted);
   font-size: 9px;
-  letter-spacing: 2px;
-  color: #777;
-  margin-bottom: 8px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
 }
 
 .product-info h3 {
-  font-size: 13px;
+  margin: 0 0 7px;
+  font-size: 12px;
   font-weight: 500;
-  margin: 0 0 8px;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.8px;
 }
 
 .price {
-  font-size: 13px;
-  margin: 0 0 15px;
+  margin: 0;
+  font-size: 12px;
 }
 
-.view-product {
-  color: #111;
-  text-decoration: none;
-  font-size: 9px;
-  letter-spacing: 2px;
-  border-bottom: 1px solid #111;
-  padding-bottom: 4px;
+.quick-add {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  padding: 3px 0 5px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  font-size: 8px;
+  letter-spacing: 1.2px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 250ms ease, transform 250ms ease, border-color 250ms ease;
 }
 
-@media (max-width: 600px) {
+.product-card:hover .quick-add,
+.quick-add:focus-visible {
+  border-color: var(--ink);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.quick-add span:last-child {
+  font-size: 15px;
+  line-height: 0.7;
+}
+
+@media (max-width: 760px) {
+  .quick-add {
+    opacity: 1;
+    transform: none;
+  }
+
   .product-info h3 {
-    font-size: 12px;
+    font-size: 11px;
+  }
+
+  .product-info {
+    flex-direction: column;
+    gap: 10px;
   }
 }
 </style>

@@ -21,7 +21,7 @@ function addToCart(item) {
   <main class="wishlist-page">
 
     <!-- HEADER -->
-    <section class="wishlist-header">
+    <section class="wishlist-header" v-reveal>
       <p>QBIYA / WISHLIST</p>
 
       <h1>
@@ -38,6 +38,7 @@ function addToCart(item) {
     <section
       v-if="wishlist.items.length === 0"
       class="empty"
+      v-reveal
     >
       <h2>YOUR WISHLIST IS EMPTY</h2>
 
@@ -54,12 +55,14 @@ function addToCart(item) {
     <section
       v-else
       class="wishlist-grid"
+      v-reveal
     >
 
       <article
         v-for="item in wishlist.items"
         :key="item.id"
         class="wishlist-card"
+        v-reveal
       >
 
         <div class="image-wrapper">
@@ -136,9 +139,10 @@ function addToCart(item) {
 }
 
 .wishlist-header h1 {
+  font-family: var(--font-display);
   font-size: clamp(40px, 6vw, 80px);
   font-weight: 400;
-  letter-spacing: -3px;
+  letter-spacing: 0;
   margin: 0 0 15px;
 }
 
@@ -187,7 +191,7 @@ function addToCart(item) {
   position: relative;
   aspect-ratio: 3 / 4;
   overflow: hidden;
-  background: #f5f5f5;
+  background: var(--paper);
 }
 
 .image-wrapper img {
@@ -195,7 +199,7 @@ function addToCart(item) {
   height: 100%;
   object-fit: cover;
   display: block;
-  transition: transform 0.5s ease;
+  transition: transform 800ms cubic-bezier(0.2, 0.65, 0.3, 1);
 }
 
 .image-wrapper:hover img {
@@ -213,7 +217,7 @@ function addToCart(item) {
   height: 32px;
 
   border: none;
-  border-radius: 50%;
+  border-radius: 0;
 
   background: white;
   cursor: pointer;
@@ -235,6 +239,7 @@ function addToCart(item) {
 }
 
 .product-info h2 {
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 500;
   margin: 0 0 10px;
@@ -253,19 +258,19 @@ function addToCart(item) {
 
   padding: 14px;
 
-  border: 1px solid #111;
+  border: 1px solid var(--ink);
   background: white;
-  color: #111;
+  color: var(--ink);
 
   font-size: 9px;
   letter-spacing: 2px;
 
   cursor: pointer;
-  transition: 0.3s;
+  transition: background 220ms ease, color 220ms ease;
 }
 
 .add-cart:hover {
-  background: #111;
+  background: var(--ink);
   color: white;
 }
 
