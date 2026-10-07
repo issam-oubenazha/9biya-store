@@ -75,13 +75,13 @@ onUnmounted(() => {
             </button>
             </div>
 
-            <div
-            v-if="searchQuery"
-            class="search-results"
-            >
+            <section class="search-suggestions" aria-live="polite">
+            <p class="suggestions-label">
+              {{ searchQuery.trim() ? 'SEARCH RESULTS' : 'SUGGESTED PRODUCTS' }}
+            </p>
 
             <RouterLink
-                v-for="product in searchResults"
+                v-for="product in (searchQuery.trim() ? searchResults : products)"
                 :key="product.id"
                 :to="`/product/${product.id}`"
                 class="search-result"
@@ -94,18 +94,19 @@ onUnmounted(() => {
 
                 <div>
                 <p>{{ product.name }}</p>
-                <span>{{ product.price }} DH</span>
+                <span class="suggestion-price">{{ product.price }} DH</span>
+                <del v-if="product.originalPrice">{{ product.originalPrice }} DH</del>
                 </div>
             </RouterLink>
 
             <p
-                v-if="searchResults.length === 0"
+                v-if="searchQuery.trim() && searchResults.length === 0"
                 class="no-results"
             >
                 NO PRODUCTS FOUND
             </p>
 
-            </div>
+            </section>
 
         </div>
         </div>
@@ -368,11 +369,29 @@ onUnmounted(() => {
   gap: 20px;
 }
 
+.search-suggestions {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 20px;
+}
+
+.suggestions-label {
+  grid-column: 1 / -1;
+  margin: 0 0 2px;
+  color: #777;
+  font-size: 10px;
+  letter-spacing: 1.7px;
+}
+
 .search-result {
   display: flex;
+  min-width: 0;
   gap: 15px;
   color: #111;
   text-decoration: none;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 12px;
 }
 
 .search-result img {
@@ -393,7 +412,19 @@ onUnmounted(() => {
   color: #666;
 }
 
+.search-result del {
+  display: block;
+  margin-top: 5px;
+  color: #999;
+  font-size: 10px;
+}
+
+.search-result .suggestion-price {
+  color: #9b3b2f;
+}
+
 .no-results {
+  grid-column: 1 / -1;
   color: #777;
   font-size: 11px;
   letter-spacing: 2px;
@@ -408,7 +439,8 @@ onUnmounted(() => {
     font-size: 20px;
   }
 
-  .search-results {
+  .search-results,
+  .search-suggestions {
     grid-template-columns: 1fr;
   }
 }

@@ -36,7 +36,11 @@ const cart = useCartStore()
       <div class="product-copy">
         <p class="category">{{ product.category }}</p>
         <h3>{{ product.name }}</h3>
-        <p class="price">{{ product.price }} DH</p>
+        <p class="rating" role="img" aria-label="Rated 5 out of 5">★★★★</p>
+        <p class="price">
+          <span class="sale-price">{{ product.price }} DH</span>
+          <del>{{ product.originalPrice }} DH</del>
+        </p>
       </div>
       <button
         class="quick-add"
@@ -109,9 +113,28 @@ const cart = useCartStore()
   letter-spacing: 0.8px;
 }
 
+.rating {
+  margin: 0 0 7px;
+  color: #94735e;
+  font-size: 10px;
+  letter-spacing: 2px;
+}
+
 .price {
+  display: flex;
+  align-items: center;
+  gap: 8px;
   margin: 0;
   font-size: 12px;
+}
+
+.sale-price {
+  color: #9b3b2f;
+}
+
+.price del {
+  color: var(--muted);
+  font-size: 10px;
 }
 
 .quick-add {
@@ -137,6 +160,11 @@ const cart = useCartStore()
   border-color: var(--ink);
   opacity: 1;
   transform: translateY(0);
+}
+
+.quick-add {
+  opacity: 1;
+  transform: none;
 }
 
 .quick-add span:last-child {
