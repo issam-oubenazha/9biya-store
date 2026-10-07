@@ -5,9 +5,9 @@ import ProductCard from '../components/ProductCard.vue'
 
 const featuredProducts = products.slice(0, 4)
 const heroSlides = [
-  { src: '/products/modelwomen.jpg', alt: 'QBIYA womenswear campaign' },
-  { src: '/products/modelhome.jpg', alt: 'QBIYA menswear campaign' },
-  { src: '/products/hello.jpg', alt: 'QBIYA monochrome fashion portrait' }
+  { src: '/products/home4.jpg', alt: 'QBIYA womenswear campaign' },
+  { src: '/products/home7.png', alt: 'QBIYA menswear campaign' },
+  { src: '/products/home6.png', alt: 'QBIYA monochrome fashion portrait' }
 ]
 const currentSlide = ref(0)
 const heroOffset = ref(0)

@@ -4,7 +4,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 const aboutPhotos = [
   { src: '/products/about.jpg', alt: 'QBIYA contemporary collection' },
   { src: '/products/modelwomen.jpg', alt: 'QBIYA womenswear campaign' },
-  { src: '/products/modelhome.jpg', alt: 'QBIYA menswear campaign' }
+  { src: '/products/about1.jpg', alt: 'QBIYA menswear campaign' }
 ]
 const currentPhoto = ref(0)
 let photoTimer = 0

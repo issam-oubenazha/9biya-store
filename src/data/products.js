@@ -1,16 +1,19 @@
 export const products = [
   {
     id: 1,
-    name: "QBIYA OVERSIZE",
+    name: "QBIYA SPEDERMAN",
     price: 699,
     category: "Homme",
-    color: "Burgundy",
-    image: "/products/modelhome.jpg",
+    color: "black",
+    image: "/products/modele-spiderman/spider1.jpg",
     sizes: ["S", "M", "L", "XL"],
     images: [
-      "/products/modelhome.jpg",
-      "/products/modelhome.jpg",
-      "/products/modelhome.jpg"
+      "/products/modele-spiderman/spider1.jpg",
+      "/products/modele-spiderman/spider2.jpg",
+      "/products/modele-spiderman/spider3.jpg",
+      "/products/modele-spiderman/spider4.jpg",
+      "/products/modele-spiderman/spider6.jpg",
+      "/products/modele-spiderman/spider5.jpg"
     ],
     description:
       "Qbiya oversize inspirée du style marocain contemporain. Une pièce confortable avec une coupe moderne et élégante.",
@@ -19,16 +22,20 @@ export const products = [
 
   {
     id: 2,
-    name: "QBIYA PREMIUM",
+    name: "QBIYA Bathman",
     price: 799,
     category: "Homme",
-    color: "Black",
-    image: "/products/qbiya5.jpg",
+    color: "beige",
+    image: "/products/bathman/bathman1.png",
     sizes: ["M", "L", "XL", "XXL"],
     images: [
-      "/products/qbiya5.jpg",
-      "/products/qbiya6.jpg",
-      "/products/modelhome.jpg"
+      "/products/bathman/bathman2.png",
+      "/products/bathman/bathman1.png",
+      "/products/bathman/bathman3.png",
+      "/products/bathman/bathman4.png",
+      "/products/bathman/bathman5.png",
+      "/products/bathman/bathman.png",
+      "/products/bathman/bathman6.png"
     ],
     description:
       "Une qbiya premium avec une finition élégante et un style minimaliste.",
@@ -37,17 +44,20 @@ export const products = [
 
   {
     id: 3,
-    name: "QBIYA ESSENTIAL",
+    name: "QBIYA spiderwoman",
     price: 599,
     category: "Femme",
-    color: "Cream",
-    image: "/products/qbiya3.jfif",
+    color: "Rose",
+    image: "/products/modele-spiderwoman/spederwomen1.jpg",
     sizes: ["S", "M", "L"],
     images: [
-      "/products/qbiya3.jfif",
-      "/products/qbiya4.jfif",
-      "/products/qbiya1.jpg",
-      "/products/qbiya5.jpg"
+      "/products/modele-spiderwoman/spederwomen1.jpg",
+      "/products/modele-spiderwoman/spederwomen2.jpg",
+      "/products/modele-spiderwoman/spederwomen3.jpg",
+      "/products/modele-spiderwoman/spederwomen4.jpg",
+      "/products/modele-spiderwoman/spederwomen5.jpg",
+      "/products/modele-spiderwoman/spederwomen6.jpg",
+      "/products/modele-spiderwoman/spederwomen7.jpg",
     ],
     description:
       "Une pièce légère et élégante adaptée à un style quotidien.",
@@ -56,16 +66,16 @@ export const products = [
 
   {
     id: 4,
-    name: "QBIYA SIGNATURE",
+    name: "QBIYA cropped",
     price: 899,
     category: "Femme",
-    color: "Black",
-    image: "/products/qbiya4.jfif",
+    color: "Pink",
+    image: "/products/croptwomen/cropped1.jpg",
     sizes: ["S", "M", "L", "XL"],
     images: [
-      "/products/qbiya4.jfif",
-      "/products/qbiya1.jfif",
-      "/products/qbiya2.png"
+      "/products/croptwomen/cropped1.jpg",
+      "/products/croptwomen/cropped2.jpg",
+      "/products/croptwomen/cropped3.jpg"
     ],
     description:
       "Notre modèle signature avec une coupe raffinée et une finition premium.",
