@@ -2,7 +2,8 @@ export const products = [
   {
     id: 1,
     name: "QBIYA SPEDERMAN",
-    price: 699,
+    price: 559,
+    originalPrice: 699,
     category: "Homme",
     color: "black",
     image: "/products/modele-spiderman/spider1.jpg",
@@ -23,7 +24,8 @@ export const products = [
   {
     id: 2,
     name: "QBIYA Bathman",
-    price: 799,
+    price: 639,
+    originalPrice: 799,
     category: "Homme",
     color: "beige",
     image: "/products/bathman/bathman1.png",
@@ -45,7 +47,8 @@ export const products = [
   {
     id: 3,
     name: "QBIYA spiderwoman",
-    price: 599,
+    price: 479,
+    originalPrice: 599,
     category: "Femme",
     color: "Rose",
     image: "/products/modele-spiderwoman/spederwomen1.jpg",
@@ -67,7 +70,8 @@ export const products = [
   {
     id: 4,
     name: "QBIYA cropped",
-    price: 899,
+    price: 719,
+    originalPrice: 899,
     category: "Femme",
     color: "Pink",
     image: "/products/croptwomen/cropped1.jpg",

@@ -3,10 +3,11 @@ import { computed, ref } from "vue"
 import { useRoute } from "vue-router"
 import { products } from "../data/products"
 import { useCartStore } from "../stores/cart"
-import { useWishlistStore } from '../stores/wishlist'
+import { useWishlistStore } from "../stores/wishlist"
 
 const route = useRoute()
 const cart = useCartStore()
+const wishlist = useWishlistStore()
 
 const selectedSize = ref("M")
 const selectedImageIndex = ref(0)
@@ -25,8 +26,6 @@ const galleryImages = computed(() =>
       ? [product.value.image]
       : []
 )
-const wishlist = useWishlistStore()
-
 function toggleSection(section) {
   expandedSection.value = expandedSection.value === section ? '' : section
 }
@@ -84,34 +83,31 @@ function addToCart() {
 
       <div class="product-content">
 
-        <p class="brand">
-          QBIYA
-        </p>
+        <div class="info-topbar">
+          <span class="crumb">HOME</span>
+
+          <button class="quick-add" type="button" @click="addToCart">
+            ADD TO BAG <span aria-hidden="true">+</span>
+          </button>
+        </div>
 
         <div class="title-row">
-
-    <h1>{{ product.name }}</h1>
-
-        <button
+          <h1>{{ product.name }}</h1>
+          <button
             class="wishlist-button"
+            type="button"
+            :aria-label="wishlist.isInWishlist(product.id) ? 'Remove from wishlist' : 'Add to wishlist'"
             @click="wishlist.toggleWishlist(product)"
-            :aria-label="
-            wishlist.isInWishlist(product.id)
-                ? 'Remove from wishlist'
-                : 'Add to wishlist'
-            "
-        >
-            {{
-            wishlist.isInWishlist(product.id)
-                ? '♥'
-                : '♡'
-            }}
-        </button>
+          >
+            {{ wishlist.isInWishlist(product.id) ? '♥' : '♡' }}
+          </button>
+        </div>
 
-    </div>
+        <p class="rating" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
 
         <p class="price">
-          {{ product.price }} DH
+          <span class="sale-price">{{ product.price }} DH</span>
+          <del>{{ product.originalPrice }} DH</del>
         </p>
 
 
@@ -240,6 +236,40 @@ function addToCart() {
 
 <style scoped>
 
+.info-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.crumb {
+  color: #7a7a7a;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.quick-add {
+  border: 0;
+  background: transparent;
+  color: #111;
+  font-size: 10px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.quick-add span {
+  font-size: 18px;
+  line-height: 1;
+}
+
 .title-row {
   display: flex;
   align-items: center;
@@ -252,25 +282,20 @@ function addToCart() {
 }
 
 .wishlist-button {
-  width: 48px;
-  height: 48px;
-
-  border: 1px solid #ddd;
+  width: 40px;
+  height: 40px;
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
   background: white;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-
-  font-size: 24px;
+  color: var(--ink);
+  font-size: 21px;
   cursor: pointer;
-
-  transition: 0.25s;
+  transition: border-color 200ms ease, color 200ms ease;
 }
 
 .wishlist-button:hover {
-  border-color: #111;
-  transform: scale(1.05);
+  border-color: var(--ink);
+  color: #9b3b2f;
 }
 
 .product-page {
@@ -385,8 +410,27 @@ h1 {
 }
 
 .price {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-size: 15px;
   margin: 18px 0 25px;
+}
+
+.rating {
+  margin: 12px 0 0;
+  color: #94735e;
+  font-size: 12px;
+  letter-spacing: 2px;
+}
+
+.sale-price {
+  color: #9b3b2f;
+}
+
+.price del {
+  color: var(--muted);
+  font-size: 12px;
 }
 
 .separator {
